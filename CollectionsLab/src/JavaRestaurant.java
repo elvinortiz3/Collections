@@ -10,7 +10,17 @@ public class JavaRestaurant {
 		//	f.CustomerManagement(new Stack<>());
 		//	f.CustomerManagement(new PriorityQueue<>());
 		f.CustomerManagement(new ArrayList<>());
+		f.copyStack(new Stack<>());
 	}
+
+	
+	/////////////////////////////////////////////////
+	private void copyStack(Stack stack) {
+		
+		
+	}
+	
+	
 
 	//Exercise 1
 	//In this exercise you want to simulate a restaurant waiting line.
@@ -179,7 +189,7 @@ public class JavaRestaurant {
 		//Implement the comparable so that 
 		//we can sort the Arraylist line by time completed
 		public int compareTo(Customer o) {		
-			if (this.getTimeToCompleted()>o.getTimeToCompleted()) {
+			if (this.getPacience()>o.getPacience()) {
 				return 1;
 			}
 
