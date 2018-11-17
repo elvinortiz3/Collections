@@ -1,26 +1,26 @@
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.PriorityQueue;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
+
+
 
 public class JavaRestaurant {
 
 	public static void main(String[] args) {
 		JavaRestaurant f = new JavaRestaurant();
+		Queue<Customer> QList = new LinkedList<>();
 		//	f.CustomerManagement(new Stack<>());
-		//	f.CustomerManagement(new PriorityQueue<>());
-		f.CustomerManagement(new ArrayList<>());
-		f.copyStack(new Stack<>());
+		f.FastFoodWithPacience(QList);
+
+		//f.CustomerManagement(new ArrayList<>());
+
 	}
 
-	
-	/////////////////////////////////////////////////
-	private void copyStack(Stack stack) {
-		
-		
-	}
-	
-	
+
+
+
 
 	//Exercise 1
 	//In this exercise you want to simulate a restaurant waiting line.
@@ -29,37 +29,47 @@ public class JavaRestaurant {
 	//
 	//
 	//
-	public int CustomerManagement(Stack<Customer> SList) {
-	
-/////////////////////////Dar a los estudiantes desde aqui///////////////////////////////
+	//Cambiar a QUEUE RUSH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	public int FastFood(Queue<Customer> queue) {
+
+		Customer john = new Customer("John", 1, 3, 5, 0);
+		Customer Austin = new Customer("Austin", 2, 3, 3, 0);
+		Customer Sandra = new Customer("Sandra", 3, 3, 3, 0);
+
+		queue.add(john);
+		queue.add(Austin);
+		queue.add(Sandra);
+
+
+		/////////////////////////Dar a los estudiantes desde aqui///////////////////////////////
 		int t = 0; //time
 		int TotalMoney = 0; //money earned
-		Stack<Customer> clerk = new Stack<>(); //where the customer will be attended
-		Stack<Customer> WaitingLine = new Stack<>(); //waiting Line
+		Queue<Customer> clerk = new LinkedList<>(); //where the customer will be attended
+		Queue<Customer> WaitingLine = new LinkedList<>(); //waiting Line
 
 		//Looks for first customer
-		while (t != SList.peek().getTimeEntered()) {
+		while (t != queue.peek().getTimeEntered()) {
 			t++;
 		}
 
 		//Push CLient to clerk
-		clerk.push(SList.pop());
+		clerk.add(queue.poll());
 
 		//If initial list, the waiting line and the clerk aren't empty.
-		while (!SList.isEmpty() || !WaitingLine.isEmpty() || !clerk.isEmpty()) {
-/////////////////////////Dar a los estudiantes hasta aqui///////////////////////////////
-			
+		while (!queue.isEmpty() || !WaitingLine.isEmpty() || !clerk.isEmpty()) {
+			/////////////////////////Dar a los estudiantes hasta aqui///////////////////////////////
+
 			//If Clerk is available and someone is waiting in line, 
 			//push customer from waiting line to clerk
 			if (clerk.isEmpty() && !WaitingLine.isEmpty()) {
-				clerk.push(WaitingLine.pop());
+				clerk.add(WaitingLine.poll());
 			}
 
 			//Looks if someone enter the restaurant from SList
 			//If time entered from top of stack equals t, then
 			//the customer must go to the waiting line
-			if (!SList.isEmpty() && SList.peek().timeEntered==t) {
-				WaitingLine.push(SList.pop());
+			if (!queue.isEmpty() && queue.peek().timeEntered==t) {
+				WaitingLine.add(queue.poll());
 			}
 
 			//Takes 1 unit of time from customer in clerk for their respective order
@@ -69,7 +79,7 @@ public class JavaRestaurant {
 			//if Orders is done, TotalMoney counter acumulates
 			if (clerk.peek().getTimeToCompleted()<=0) {
 				TotalMoney += clerk.peek().getBill();
-				clerk.pop();
+				clerk.poll();
 			}
 
 			t++;
@@ -81,13 +91,96 @@ public class JavaRestaurant {
 	}
 
 
-	public int CustomerManagement(PriorityQueue<Customer> QList) {
+
+	public int FastFoodWithPacience(Queue<Customer> queue) {
+
+		Customer Lucas = new Customer("Lucas", 0, 3, 5, 3);
+		Customer john = new Customer("John", 1, 3, 5, 3);
+		Customer Austin = new Customer("Austin", 2, 3, 3, 1);
+		Customer Sandra = new Customer("Sandra", 3, 3, 3, 4);
+
+		queue.add(Lucas);
+		queue.add(john);
+		queue.add(Austin);
+		queue.add(Sandra);
 
 
+		/////////////////////////Dar a los estudiantes desde aqui///////////////////////////////
+		int t = 0; //time
+		int TotalMoney = 0; //money earned
+		Queue<Customer> clerk = new LinkedList<>(); //where the customer will be attended
+		Queue<Customer> WaitingLine = new LinkedList<>(); //waiting Line
 
-		return 0;
+		//Looks for first customer
+		while (t != queue.peek().getTimeEntered()) {
+			t++;
+		}
+
+		//Push CLient to clerk
+		clerk.add(queue.poll());
+
+		//If initial list, the waiting line and the clerk aren't empty.
+		while (!queue.isEmpty() || !WaitingLine.isEmpty() || !clerk.isEmpty()) {
+			/////////////////////////Dar a los estudiantes hasta aqui///////////////////////////////
+
+			//If Clerk is available and someone is waiting in line, 
+			//push customer from waiting line to clerk
+			if (clerk.isEmpty() && !WaitingLine.isEmpty()) {
+				clerk.add(WaitingLine.poll());
+			}
+
+			//Looks if someone enter the restaurant from SList
+			//If time entered from top of stack equals t, then
+			//the customer must go to the waiting line
+			if (!queue.isEmpty() && queue.peek().timeEntered==t) {
+				WaitingLine.add(queue.poll());
+			}
+
+			//Takes 1 unit of time from customer in clerk for their respective order
+			clerk.peek().setTimeToCompleted(clerk.peek().getTimeToCompleted()-1);
+
+			WaitingLine = pacienceReducer(WaitingLine);
+			//Verifies if the order is done
+			//if Orders is done, TotalMoney counter acumulates
+			if (clerk.peek().getTimeToCompleted()<=0) {
+				TotalMoney += clerk.peek().getBill();
+				clerk.poll();
+			}
+
+			t++;
+
+
+		}
+		return TotalMoney;
 
 	}
+
+
+	private Queue<Customer> pacienceReducer(Queue<Customer> waitingLine) {
+
+		Queue<Customer> temp = new LinkedList<>();
+
+		while (!waitingLine.isEmpty()) {
+			waitingLine.peek().setPacience(waitingLine.peek().getPacience()-1);
+			if (waitingLine.peek().getPacience()==0) {
+				waitingLine.poll();
+			}
+			else {
+				temp.add(waitingLine.poll());
+			}
+
+		}
+
+
+		waitingLine = temp;
+		
+		return waitingLine;
+
+	}
+
+
+
+
 
 	//Exercise 2
 	//A lot of people have entered the restaurant and you don't 
@@ -109,7 +202,6 @@ public class JavaRestaurant {
 		return l;
 
 	}
-
 
 
 
@@ -182,7 +274,7 @@ public class JavaRestaurant {
 		}
 
 		public String toString() {
-			return "Name: " +Name + " Arrive: " + timeEntered + " \nOrders Time: " + timeToCompleted;
+			return "("+Name + ", Arrive: " + timeEntered + " \nOrders Time: " + timeToCompleted+")";
 		}
 
 
@@ -196,9 +288,7 @@ public class JavaRestaurant {
 			else {
 				return -1;
 			}
-		}
-		
-		
-		
+		}	
 	}
+
 }
