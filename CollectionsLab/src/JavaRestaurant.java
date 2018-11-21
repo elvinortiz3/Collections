@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
@@ -8,78 +9,50 @@ import java.util.Stack;
 
 public class JavaRestaurant {
 
-	public static void main(String[] args) {
-		JavaRestaurant f = new JavaRestaurant();
-		Queue<Customer> QList = new LinkedList<>();
-		//	f.CustomerManagement(new Stack<>());
-		f.FastFoodWithPacience(QList);
-
-		//f.CustomerManagement(new ArrayList<>());
-
-	}
-
-
-
-
-
 	//Exercise 1
 	//In this exercise you want to simulate a restaurant waiting line.
 	//Time is denoted by a variable "t" that starts at 0
-	//While the stack SList, waitingLine and clerk are not empty
-	//
-	//
-	//
-	//Cambiar a QUEUE RUSH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	public int FastFood(Queue<Customer> queue) {
+	//Follow the instructions in the comments to complete this exercise
+	//Return the total amount of money that the customers paid for there service.
+	public int FastFood(Queue<Customer> incomingCustomers) {
 
-		Customer john = new Customer("John", 1, 3, 5, 0);
-		Customer Austin = new Customer("Austin", 2, 3, 3, 0);
-		Customer Sandra = new Customer("Sandra", 3, 3, 3, 0);
-
-		queue.add(john);
-		queue.add(Austin);
-		queue.add(Sandra);
-
-
-		/////////////////////////Dar a los estudiantes desde aqui///////////////////////////////
 		int t = 0; //time
 		int TotalMoney = 0; //money earned
-		Queue<Customer> clerk = new LinkedList<>(); //where the customer will be attended
+		Customer CustomerAtCashRegister = null; //where the customer will be attended
 		Queue<Customer> WaitingLine = new LinkedList<>(); //waiting Line
 
 		//Looks for first customer
-		while (t != queue.peek().getTimeEntered()) {
+		while (t != incomingCustomers.peek().getTimeEntered()) {
 			t++;
 		}
 
-		//Push CLient to clerk
-		clerk.add(queue.poll());
+		//Assign first customer to cash register
+		CustomerAtCashRegister = (incomingCustomers.poll());
 
-		//If initial list, the waiting line and the clerk aren't empty.
-		while (!queue.isEmpty() || !WaitingLine.isEmpty() || !clerk.isEmpty()) {
+		//If initial list, the waiting line and the cash register aren't empty.
+		while (!incomingCustomers.isEmpty() || !WaitingLine.isEmpty() || CustomerAtCashRegister!= null) {
 			/////////////////////////Dar a los estudiantes hasta aqui///////////////////////////////
 
-			//If Clerk is available and someone is waiting in line, 
-			//push customer from waiting line to clerk
-			if (clerk.isEmpty() && !WaitingLine.isEmpty()) {
-				clerk.add(WaitingLine.poll());
+			//If cash register is available and someone is waiting in line, 
+			//then move the next customer from waiting line to cash register
+			if (CustomerAtCashRegister==null && !WaitingLine.isEmpty()) {
+				CustomerAtCashRegister = (WaitingLine.poll());
 			}
 
-			//Looks if someone enter the restaurant from SList
-			//If time entered from top of stack equals t, then
-			//the customer must go to the waiting line
-			if (!queue.isEmpty() && queue.peek().timeEntered==t) {
-				WaitingLine.add(queue.poll());
+			//Looks if some incoming customer can enter the restaurant
+			//If that is the case, move that customer to the waiting line
+			if (!incomingCustomers.isEmpty() && incomingCustomers.peek().timeEntered<=t) {
+				WaitingLine.add(incomingCustomers.poll());
 			}
 
-			//Takes 1 unit of time from customer in clerk for their respective order
-			clerk.peek().setTimeToCompleted(clerk.peek().getTimeToCompleted()-1);
+			//Takes 1 unit of time from customer in cash register for their respective order
+			CustomerAtCashRegister.setTimeToCompleted(CustomerAtCashRegister.getTimeToCompleted()-1);
 
-			//Verifies if the order is done
-			//if Orders is done, TotalMoney counter acumulates
-			if (clerk.peek().getTimeToCompleted()<=0) {
-				TotalMoney += clerk.peek().getBill();
-				clerk.poll();
+			//If the cash register is done, accumulate the money from the order
+			//and free the cash register.
+			if (CustomerAtCashRegister.getTimeToCompleted()<=0) {
+				TotalMoney += CustomerAtCashRegister.getBill();
+				CustomerAtCashRegister = null;
 			}
 
 			t++;
@@ -92,23 +65,12 @@ public class JavaRestaurant {
 
 
 
-	public int FastFoodWithPacience(Queue<Customer> queue) {
-
-		Customer Lucas = new Customer("Lucas", 0, 3, 5, 3);
-		Customer john = new Customer("John", 1, 3, 5, 3);
-		Customer Austin = new Customer("Austin", 2, 3, 3, 1);
-		Customer Sandra = new Customer("Sandra", 3, 3, 3, 4);
-
-		queue.add(Lucas);
-		queue.add(john);
-		queue.add(Austin);
-		queue.add(Sandra);
-
+	public int FastFoodWithPatience(Queue<Customer> queue) {
 
 		/////////////////////////Dar a los estudiantes desde aqui///////////////////////////////
 		int t = 0; //time
 		int TotalMoney = 0; //money earned
-		Queue<Customer> cashRegister = new LinkedList<>(); //where the customer will be attended
+		Customer cashRegister = null; //where the customer will be attended
 		Queue<Customer> WaitingLine = new LinkedList<>(); //waiting Line
 
 		//Looks for first customer
@@ -117,16 +79,16 @@ public class JavaRestaurant {
 		}
 
 		//Push CLient to clerk
-		cashRegister.add(queue.poll());
+		cashRegister = queue.poll();
 
 		//If initial list, the waiting line and the clerk aren't empty.
-		while (!queue.isEmpty() || !WaitingLine.isEmpty() || !cashRegister.isEmpty()) {
+		while (!queue.isEmpty() || !WaitingLine.isEmpty() || cashRegister!=null) {
 			/////////////////////////Dar a los estudiantes hasta aqui///////////////////////////////
 
 			//If Clerk is available and someone is waiting in line, 
 			//push customer from waiting line to clerk
-			if (cashRegister.isEmpty() && !WaitingLine.isEmpty()) {
-				cashRegister.add(WaitingLine.poll());
+			if (cashRegister!=null && !WaitingLine.isEmpty()) {
+				cashRegister = WaitingLine.poll();
 			}
 
 			//Looks if someone enter the restaurant from SList
@@ -137,14 +99,19 @@ public class JavaRestaurant {
 			}
 
 			//Takes 1 unit of time from customer in clerk for their respective order
-			cashRegister.peek().setTimeToCompleted(cashRegister.peek().getTimeToCompleted()-1);
+			cashRegister.setTimeToCompleted(cashRegister.getTimeToCompleted()-1);
 
+			
+			//Reduce 1 unit of patience to every Customer in the waitingLine
 			WaitingLine = pacienceReducer(WaitingLine);
+			
+			
+			
 			//Verifies if the order is done
 			//if Orders is done, TotalMoney counter acumulates
-			if (cashRegister.peek().getTimeToCompleted()<=0) {
-				TotalMoney += cashRegister.peek().getBill();
-				cashRegister.poll();
+			if (cashRegister.getTimeToCompleted()<=0) {
+				TotalMoney += cashRegister.getBill();
+				cashRegister = null;
 			}
 
 			t++;
@@ -156,17 +123,17 @@ public class JavaRestaurant {
 	}
 
 
-	//Exercise 3
+	//Exercise 2
 	//Implement a method to reduce 1 unit of time to every
 	//customer in the waiting line to his/hers patience.
-	//If patience is equals to zero, the customer will go.
+	//If patience is equals to zero, the customer will get out of the line and leave.
 	private Queue<Customer> pacienceReducer(Queue<Customer> waitingLine) {
 
 		Queue<Customer> temp = new LinkedList<>();
 
 		while (!waitingLine.isEmpty()) {
 			waitingLine.peek().setPatience(waitingLine.peek().getPatience()-1);
-			if (waitingLine.peek().getPatience()==0) {
+			if (waitingLine.peek().getPatience()<=0) {
 				waitingLine.poll();
 			}
 			else {
@@ -177,7 +144,7 @@ public class JavaRestaurant {
 
 
 		waitingLine = temp;
-		
+
 		return waitingLine;
 
 	}
@@ -188,22 +155,37 @@ public class JavaRestaurant {
 
 	//Exercise 3
 	//A lot of people have entered the restaurant and you don't 
-	//know the order they have enter. Sort the Arraylist to attend
-	//the customers by the orders that take less time.
+	//know the order they have enter. Sort the WaitingLine Queue to attend
+	//the customers patience that take less time.
 	//Hint: Use the compareTo method in Customer class and Collections.sort();
-	public ArrayList<Customer> CustomerManagement(ArrayList<Customer> AList) {
+	//Cambiar a comparator
+	//Bono usar stack recursivo (GCD con stack)
+	public int CustomerManagement(Queue<Customer> WaitingLine) {
 
-		ArrayList<Customer> l = new ArrayList<>();
-
-		l.add(new Customer("A", 0, 3, 7, 9));
-		l.add(new Customer("B", 0, 3, 1, 9));
-		l.add(new Customer("C", 0, 3, 6, 9));
-		l.add(new Customer("D", 0, 3, 9, 9));
-
-		Collections.sort(l);
+		
+		int totalMoney = 0;
+		
+		Collections.sort((List<Customer>) WaitingLine);
 
 
-		return l;
+		Customer cashRegister = WaitingLine.poll();
+
+		while (!WaitingLine.isEmpty()) {
+			if (cashRegister != null) {
+				cashRegister.setTimeToCompleted(cashRegister.getTimeToCompleted()-1);
+				if (cashRegister.getTimeToCompleted()<=0) {
+					totalMoney = totalMoney +cashRegister.getBill();
+					cashRegister = null;
+				}
+			}
+			else {
+				cashRegister = WaitingLine.poll();
+			}	
+
+		}
+
+
+		return totalMoney;
 
 	}
 
@@ -278,17 +260,16 @@ public class JavaRestaurant {
 		}
 
 		public String toString() {
-			return "("+Name + ", Arrive: " + timeEntered + " \nOrders Time: " + timeToCompleted+")";
+			return "("+Name + ", Patience: " + patience + " \nOrders Time: " + timeToCompleted+")";
 		}
 
 
 		//Implement the comparable so that 
-		//we can sort the Arraylist line by time completed
+		//we can sort the WaitingLine by Patience
 		public int compareTo(Customer o) {		
 			if (this.getPatience()>o.getPatience()) {
 				return 1;
 			}
-
 			else {
 				return -1;
 			}
