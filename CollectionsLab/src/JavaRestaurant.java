@@ -173,21 +173,12 @@ public class JavaRestaurant {
 	//A lot of people have entered the restaurant and you don't 
 	//know the order they have enter. Sort the WaitingLine Queue to attend
 	//the customers patience that take less time.
-	//Hint: Use the compareTo method in Customer class and Collections.sort();
+	//Hint: Use the Comparator and Collections.sort();
 	public int CustomerManagement(Queue<Customer> WaitingLine) {
 
 		
 		int totalMoney = 0;
-		
-		Customer ben = new Customer("Ben", 0, 4, 3, 4);
-		Customer Stacey = new Customer("Stacey", 0, 4, 3, 1);
-		Customer Jorge = new Customer("Jorge", 0, 4, 3, 2);
-		
-	
-		WaitingLine.add(ben);
-		WaitingLine.add(Stacey);
-		WaitingLine.add(Jorge);
-		
+				
 		Collections.sort((List<Customer>) WaitingLine, new Comparator<Customer>() {
 
 			@Override
