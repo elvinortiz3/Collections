@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -8,6 +9,21 @@ import java.util.Stack;
 
 
 public class JavaRestaurant {
+
+//	public static void main(String[] args) {
+//		JavaRestaurant f = new JavaRestaurant();
+//		Queue<Customer> QList = new LinkedList<>();
+//		//	f.CustomerManagement(new Stack<>());
+//		//	f.FastFoodWithPacience(QList);
+//		f.CustomerManagement(QList);
+//
+//		//f.CustomerManagement(new ArrayList<>());
+//
+//	}
+//
+
+
+
 
 	//Exercise 1
 	//In this exercise you want to simulate a restaurant waiting line.
@@ -158,14 +174,30 @@ public class JavaRestaurant {
 	//know the order they have enter. Sort the WaitingLine Queue to attend
 	//the customers patience that take less time.
 	//Hint: Use the compareTo method in Customer class and Collections.sort();
-	//Cambiar a comparator
-	//Bono usar stack recursivo (GCD con stack)
 	public int CustomerManagement(Queue<Customer> WaitingLine) {
 
 		
 		int totalMoney = 0;
 		
-		Collections.sort((List<Customer>) WaitingLine);
+		Customer ben = new Customer("Ben", 0, 4, 3, 4);
+		Customer Stacey = new Customer("Stacey", 0, 4, 3, 1);
+		Customer Jorge = new Customer("Jorge", 0, 4, 3, 2);
+		
+	
+		WaitingLine.add(ben);
+		WaitingLine.add(Stacey);
+		WaitingLine.add(Jorge);
+		
+		Collections.sort((List<Customer>) WaitingLine, new Comparator<Customer>() {
+
+			@Override
+			public int compare(Customer o1, Customer o2) {
+				if (o1.getPatience()<o2.getPatience()) {
+					return 1;
+				}
+				return -1;
+			}
+		});
 
 
 		Customer cashRegister = WaitingLine.poll();
