@@ -1,28 +1,13 @@
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Stack;
+
 
 
 
 public class JavaRestaurant {
-
-//	public static void main(String[] args) {
-//		JavaRestaurant f = new JavaRestaurant();
-//		Queue<Customer> QList = new LinkedList<>();
-//		//	f.CustomerManagement(new Stack<>());
-//		//	f.FastFoodWithPacience(QList);
-//		f.CustomerManagement(QList);
-//
-//		//f.CustomerManagement(new ArrayList<>());
-//
-//	}
-//
-
-
 
 
 	//Exercise 1
@@ -30,7 +15,7 @@ public class JavaRestaurant {
 	//Time is denoted by a variable "t" that starts at 0
 	//Follow the instructions in the comments to complete this exercise
 	//Return the total amount of money that the customers paid for there service.
-	public int FastFood(Queue<Customer> incomingCustomers) {
+	public static int FastFood(Queue<Customer> incomingCustomers) {
 
 		int t = 0; //time
 		int TotalMoney = 0; //money earned
@@ -81,7 +66,7 @@ public class JavaRestaurant {
 
 
 
-	public int FastFoodWithPatience(Queue<Customer> queue) {
+	public static int FastFoodWithPatience(Queue<Customer> queue) {
 
 		/////////////////////////Dar a los estudiantes desde aqui///////////////////////////////
 		int t = 0; //time
@@ -103,7 +88,7 @@ public class JavaRestaurant {
 
 			//If Clerk is available and someone is waiting in line, 
 			//push customer from waiting line to clerk
-			if (cashRegister!=null && !WaitingLine.isEmpty()) {
+			if (cashRegister==null && !WaitingLine.isEmpty()) {
 				cashRegister = WaitingLine.poll();
 			}
 
@@ -143,7 +128,7 @@ public class JavaRestaurant {
 	//Implement a method to reduce 1 unit of time to every
 	//customer in the waiting line to his/hers patience.
 	//If patience is equals to zero, the customer will get out of the line and leave.
-	private Queue<Customer> pacienceReducer(Queue<Customer> waitingLine) {
+	private static Queue<Customer> pacienceReducer(Queue<Customer> waitingLine) {
 
 		Queue<Customer> temp = new LinkedList<>();
 
@@ -174,7 +159,8 @@ public class JavaRestaurant {
 	//know the order they have enter. Sort the WaitingLine Queue to attend
 	//the customers patience that take less time.
 	//Hint: Use the Comparator and Collections.sort();
-	public int CustomerManagement(Queue<Customer> WaitingLine) {
+	@SuppressWarnings("unchecked")
+	public static int CustomerManagement(Queue<Customer> WaitingLine) {
 
 		
 		int totalMoney = 0;
@@ -191,9 +177,9 @@ public class JavaRestaurant {
 		});
 
 
-		Customer cashRegister = WaitingLine.poll();
+		Customer cashRegister = null;
 
-		while (!WaitingLine.isEmpty()) {
+		while (!WaitingLine.isEmpty()||cashRegister != null) {
 			if (cashRegister != null) {
 				cashRegister.setTimeToCompleted(cashRegister.getTimeToCompleted()-1);
 				if (cashRegister.getTimeToCompleted()<=0) {
@@ -216,22 +202,28 @@ public class JavaRestaurant {
 
 
 
-	public class Customer implements Comparable<Customer> {
+	public static class Customer implements Comparable<Customer> {
 		public int timeEntered;
 		public int bill;
 		public int timeToCompleted;
 		public int patience;
 		public String Name;
 
-
-		public Customer(String Name,int timeEntered, int bill, int timeToCompleted, int Pacience) {
+		public Customer(String Name,int timeEntered, int bill, int timeToCompleted, int patience) {
 			this.timeEntered = timeEntered;
 			this.bill = bill;
 			this.timeToCompleted = timeToCompleted;
-			this.patience = Pacience;
+			this.patience = patience;
 			this.Name = Name;
 		}
-
+		
+		public Customer(CustomerBuilder builder) {
+			this(builder.Name,
+					builder.timeEntered, 
+					builder.bill, 
+					builder.timeToCompleted, 
+					builder.patience);
+		}
 
 		public String getName() {
 			return Name;
@@ -298,5 +290,37 @@ public class JavaRestaurant {
 			}
 		}	
 	}
+	public static class CustomerBuilder{
 
+		private int timeEntered = 0;
+		private int bill = 0;
+		private int timeToCompleted = 0;
+		private int patience = 0;
+		private String Name = "";
+
+		public CustomerBuilder timeEntered(int val) {
+			timeEntered = val;
+			return this;
+		}
+		public CustomerBuilder bill(int val) {
+			bill = val;
+			return this;
+		}
+		public CustomerBuilder timeToCompleted(int val) {
+			timeToCompleted = val;
+			return this;
+		}
+		public CustomerBuilder patience(int val) {
+			patience = val;
+			return this;
+		}
+		public CustomerBuilder Name(String val) {
+			Name = val;
+			return this;
+		}
+
+		public Customer build() {
+			return new Customer(this);
+		}
+	}
 }
